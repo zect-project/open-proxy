@@ -19,6 +19,11 @@ async function handler(req: NextRequest, { params }: { params: { path: string[] 
 
   const targetUrl = `${GEMINI_BASE}/${path}${queryString}`
 
+  // ВРЕМЕННЫЙ ДИАГНОСТИЧЕСКИЙ ЛОГ — удалить после отладки
+  console.log('[proxy debug] incoming req.url:', req.url)
+  console.log('[proxy debug] incoming url.search (raw):', url.search)
+  console.log('[proxy debug] outgoing targetUrl:', targetUrl)
+
   const headers = new Headers()
   
   // Копируем заголовки
