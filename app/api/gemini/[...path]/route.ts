@@ -8,7 +8,15 @@ export const dynamic = 'force-dynamic'
 async function handler(req: NextRequest, { params }: { params: { path: string[] } }) {
   const path = params.path.join('/')
   const url = new URL(req.url)
-  const queryString = url.search
+
+  // Vercel подставляет сегменты динамического роута [...path] как query-параметр
+  // с тем же именем ("path"). Google API его не знает и падает с ошибкой
+  // "Unknown name 'path': Cannot bind query parameter", поэтому вырезаем его,
+  // сохраняя остальные реальные параметры (key, alt=sse и т.д.).
+  const searchParams = new URLSearchParams(url.search)
+  searchParams.delete('path')
+  const queryString = searchParams.toString() ? `?${searchParams.toString()}` : ''
+
   const targetUrl = `${GEMINI_BASE}/${path}${queryString}`
 
   const headers = new Headers()
